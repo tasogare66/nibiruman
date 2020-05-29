@@ -1,15 +1,17 @@
 -- title:  Nibiruman:2080
 -- author: tasogare66
--- desc:   arena shooter
+-- desc:   intense arcade-style shooter
 -- script: lua
-local insert = table.insert
-local remove = table.remove
-local sort = table.sort
-local pairs = pairs
-local min,max,abs = math.min,math.max,math.abs
-local sin,cos,atan2 = math.sin,math.cos,math.atan2
-local random = math.random
-local yield = coroutine.yield
+
+-- https://github.com/tasogare66/nibiruman
+
+local insert=table.insert
+local remove=table.remove
+local pairs=pairs
+local min,max,abs=math.min,math.max,math.abs
+local sin,cos,atan2=math.sin,math.cos,math.atan2
+local random=math.random
+local yield=coroutine.yield
 EPSILON=1e-05
 local DEG2RAD = math.pi/180
 local RAD2DEG = 180/math.pi
@@ -597,7 +599,7 @@ local function add_entity_to_cell(self, idx, e)
 	if not self.cells[idx] then
 		self.cells[idx] = { e }
 	else
-		table.insert(self.cells[idx], e)
+		insert(self.cells[idx], e)
 	end
 end
 
@@ -696,14 +698,14 @@ end
 
 local function each_overlapping_entity(self, e, fn, ...)
 	-- Init set for keeping track of which entities have already been handled
-	local set = table.remove(self.tablepool) or {}
+	local set = remove(self.tablepool) or {}
 	-- Do overlap checks
 	each_overlapping_cell(self, e, each_overlapping_in_cell, e, set, fn, ...)
 	-- Clear set and return to pool
 	for v in pairs(set) do
 		set[v] = nil
 	end
-	table.insert(self.tablepool, set)
+	insert(self.tablepool, set)
 end
 
 function shash:each(x, y, w, h, fn, ...)
@@ -1730,7 +1732,7 @@ function Boss:dead()
 end
 function Boss:upd_for_second(sec,func)
 	while sec > 0 do
-		coroutine.yield(1)
+		yield(1)
 		if(func)then func() end
 		sec = sec - self.dt
 	end
@@ -2225,7 +2227,7 @@ Spawner.__index=Spawner
 
 function wait_for_second(sec,func)
 	while sec > 0 do
-		coroutine.yield(1)
+		yield(1)
 		if(func)then func() end
 		sec = sec - Spawner_dt
 	end
@@ -2450,7 +2452,7 @@ function Spawner:exec(dt)
 			if flg ~= nil then
 				assert(false,flg)
 			end
-			table.remove(self.lst, i)
+			remove(self.lst, i)
 		end
 	end
 end
