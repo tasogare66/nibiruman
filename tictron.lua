@@ -49,6 +49,7 @@ KEY={B=2,H=8,K=11,O=15,P=16,
 }
 function dbg_key(k)
 	return _DEBUG and key(k) or false
+	--return key(k)
 end
 function btn_dec()
 	return btnp(4)
@@ -2631,13 +2632,13 @@ function mode_title:ctrl(dt)
 		end
 		self.decide_time = self.decide_time - dt
 	elseif btn_dec() then
-		self.decide_type=self.cursor==0 and Input.StateLog or Input.StateTrace
+		self.decide_type=CURSOR==0 and Input.StateLog or Input.StateTrace
 		self:setdec()
 	elseif btnp(7) then --replay
 		self.decide_type=Input.StateTrace
 		self:setdec()
-	elseif btn(0) then self.cursor=0
-	elseif btn(1) and Input:exists_log() then self.cursor=1
+	elseif btn(0) then CURSOR=0
+	elseif btn(1) and Input:exists_log() then CURSOR=1
 	end
 	return true
 end
@@ -2666,8 +2667,8 @@ function mode_title:draw1()
 		print_hcenter("- Press Z to start -",108,15,false,1)
 	end
 	local rc=random(1,15)
-	x=print_hcenter("GAME START",68,self.cursor==0 and rc or 15)
-	print("REPLAY",x,80,self.cursor==1 and rc or (Input:exists_log()and 15 or 10))
+	x=print_hcenter("GAME START",68,CURSOR==0 and rc or 15)
+	print("REPLAY",x,80,CURSOR==1 and rc or (Input:exists_log()and 15 or 10))
 	print_hcenter("HIGH SCORE",2,6,false,1)
 	print_hcenter(string.format("%d",HISCORE),10,15,true,1)
 	print(GAME_VER,4,SCR_HEIGHT-16,7,false)
@@ -2680,12 +2681,12 @@ mode_title.new = function()
 		decide=false,
 		decide_time=0,
 		decide_type=Input.StateLog,
-		cursor=0,
 	},mode_title)
 end
 
 GAME = mode_game.new()
 HISCORE=50000
+CURSOR=0
 MODEM:request(mode_title.new())
 
 _DEBUG,_MUTE,dbg_pause=false,false,false
@@ -2728,7 +2729,6 @@ function TIC()
 	MODEM:draw0()
 	PtclLst:draw(Camera.trs)
 	ObjLstA:draw(Camera.trs)
-
 	MODEM:draw1()
 	if _DEBUG then print(string.format("%6.3f",FPS), 0, 0) end
 end
