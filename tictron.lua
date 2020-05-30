@@ -24,6 +24,7 @@ function table.clone(org)
 	return copy
 end
 
+GAME_VER="v.0.9.0"
 SCR_WIDTH=240
 SCR_HEIGHT=136
 
@@ -62,9 +63,9 @@ end
 
 -- Copyright (c) 2015 , 蒙占志(topameng) topameng@gmail.com
 -- All rights reserved.
---
 -- Use, modification and distribution are subject to the "New BSD License"
 -- as listed at <url: http://www.opensource.org/licenses/bsd-license.php >.
+-- https://github.com/topameng/CsToLua/blob/master/tolua/Assets/Lua/Vector2.lua
 local sqrt = math.sqrt
 local rawset = rawset
 local rawget = rawget
@@ -215,6 +216,13 @@ fields.normalized   = Vec2.Normalize
 fields.sqrMagnitude = Vec2.SqrMagnitude
 
 --// matrix //
+--[[
+LuaMatrix
+Licensed under the same terms as Lua itself.
+Developers:
+	Michael Lutz (chillcode) - original author
+	David Manura http://lua-users.org/wiki/DavidManura
+--]]
 local matrix = {_TYPE='module', _NAME='matrix', _VERSION='0.2.11.20120416'}
 
 local matrix_meta = {}
@@ -325,66 +333,6 @@ function matrix.type( mtx )
 	return "number"
 end
 	
-local num_copy = function( num )
-	return num
-end
-local t_copy = function( t )
-	local newt = setmetatable( {}, getmetatable( t ) )
-	for i,v in ipairs( t ) do
-		newt[i] = v
-	end
-	return newt
-end
-
-function matrix.copy( m1 )
-	local docopy = matrix.type( m1 ) == "number" and num_copy or t_copy
-	local mtx = {}
-	for i = 1,#m1[1] do
-		mtx[i] = {}
-		for j = 1,#m1 do
-			mtx[i][j] = docopy( m1[i][j] )
-		end
-	end
-	return setmetatable( mtx, matrix_meta )
-end
-
-function matrix.subm( m1,i1,j1,i2,j2 )
-	local docopy = matrix.type( m1 ) == "number" and num_copy or t_copy
-	local mtx = {}
-	for i = i1,i2 do
-		local _i = i-i1+1
-		mtx[_i] = {}
-		for j = j1,j2 do
-			local _j = j-j1+1
-			mtx[_i][_j] = docopy( m1[i][j] )
-		end
-	end
-	return setmetatable( mtx, matrix_meta )
-end
-
-local function number_tostring( e,fstr )
-	return fstr and string.format( fstr,e ) or e
-end
-
-function matrix.tostring( mtx, formatstr )
-	local ts = {}
-	local mtype = matrix.type( mtx )
-	local e = mtx[1][1]
-	local tostring = type(e) == "table" and e.tostring or number_tostring
-	for i = 1,#mtx do
-		local tstr = {}
-		for j = 1,#mtx[1] do
-			tstr[j] = tostring(mtx[i][j],formatstr)
-		end
-		ts[i] = table.concat(tstr, "\t")
-	end
-	return table.concat(ts, "\n")
-end
-
-function matrix.print( ... )
-	print( matrix.tostring( ... ) )
-end
-
 function matrix.rows( mtx )
 	return #mtx
 end
@@ -420,12 +368,6 @@ function matrix.replace( m1, func, ... )
 		mtx[i] = mtxi
 	end
 	return setmetatable( mtx, matrix_meta )
-end
-
-function matrix.elementstostrings( mtx )
-	local e = mtx[1][1]
-	local tostring = type(e) == "table" and e.tostring or tostring
-	return matrix.replace(mtx, tostring)
 end
 
 matrix_meta.__add = function( ... )
@@ -467,14 +409,6 @@ matrix_meta.__eq = function( m1, m2 )
 		end
 	end
 	return true
-end
-
-matrix_meta.__tostring = function( ... )
-	return matrix.tostring( ... )
-end
-
-matrix_meta.__call = function( ... )
-	matrix.print( ... )
 end
 
 matrix_meta.__index = {}
@@ -2730,7 +2664,8 @@ function mode_title:draw1()
 	print("REPLAY",x,80,self.cursor==1 and rc or (Input:exists_log()and 15 or 10))
 	print_hcenter("HIGH SCORE",2,6,false,1)
 	print_hcenter(string.format("%d",HISCORE),10,15,true,1)
-	print("@tasogare66",168,SCR_HEIGHT-8,7,false)
+	print(GAME_VER,4,SCR_HEIGHT-16,7,false)
+	print("@tasogare66",4,SCR_HEIGHT-8,7,false)
 end
 mode_title.new = function()
 	return setmetatable({
