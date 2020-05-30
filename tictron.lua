@@ -44,7 +44,7 @@ end
 function print_dbg(str,x,y)
 	print(str,x,y,15,true,1,true)
 end
-KEY={B=2,H=8,K=11,
+KEY={B=2,H=8,K=11,O=15,P=16,
 	W=23,A=1,S=19,D=4,
 }
 function dbg_key(k)
@@ -2439,6 +2439,10 @@ function Mode:update(dt)
 	end
 	return self:ctrl(dt)
 end
+function Mode:update_post()
+	local work=self.cur_work
+	if work and work.ctrl_post then work:ctrl_post() end
+end
 function Mode:draw0()
 	local work=self.cur_work
 	if work and work.draw0 then work:draw0() end
@@ -2504,12 +2508,14 @@ mode_game.ctrl = function(self,dt)
 	end 
 	return ret
 end
+function mode_game:ctrl_post()
+	Camera:upd(self.pl)
+end
 mode_game.dest = function(self)
 	Input:term()
 	Mode.base_clr() --clr
 end
 function mode_game:draw0()
-	Camera:upd(self.pl)
 	-- local ccx,ccy,ofsx,ofsy=Camera:calc_cc(0.125)
 	-- map(ccx+60,ccy,31,18,ofsx,ofsy)
 	local ccx,ccy,ofsx,ofsy=Camera:calc_cc(1)
@@ -2682,7 +2688,7 @@ GAME = mode_game.new()
 HISCORE=50000
 MODEM:request(mode_title.new())
 
-_DEBUG,_MUTE=false,false
+_DEBUG,_MUTE,dbg_pause=false,false,false
 prev_time=time()/1000
 frame_time_sum=0
 frame_times={}
@@ -2703,13 +2709,21 @@ function TIC()
 	FPS = frame_num / frame_time_sum
 
 	cls(1)
-	--update input
-	dt=Input:upd(dt)
-	--update mode
-	if MODEM:update(dt) then
-		--update entity
-		ObjLstA:update(dt)
-		PtclLst:update(dt)
+	local dbg_step=false
+	if _DEBUG then
+		if dbg_pause and keyp(KEY.P) then dbg_step=true end
+		if key(KEY.P) then dbg_pause=true elseif key(KEY.O) then dbg_pause=false end
+	end
+	if (not dbg_pause) or dbg_step then
+		--update input
+		dt=Input:upd(dt)
+		--update mode
+		if MODEM:update(dt) then
+			--update entity
+			ObjLstA:update(dt)
+			PtclLst:update(dt)
+		end
+		MODEM:update_post()
 	end
 	MODEM:draw0()
 	PtclLst:draw(Camera.trs)
