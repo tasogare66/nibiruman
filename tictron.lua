@@ -62,6 +62,7 @@ function psfx(id,note,dur,chnl)
 	if _MUTE~=true then sfx(id,note,dur,chnl) end
 end
 
+-- Vec2 is
 -- Copyright (c) 2015 , 蒙占志(topameng) topameng@gmail.com
 -- All rights reserved.
 -- Use, modification and distribution are subject to the "New BSD License"
@@ -223,6 +224,8 @@ Licensed under the same terms as Lua itself.
 Developers:
 	Michael Lutz (chillcode) - original author
 	David Manura http://lua-users.org/wiki/DavidManura
+
+	https://github.com/davidm/lua-matrix/blob/master/LICENSE.txt
 --]]
 local matrix = {_TYPE='module', _NAME='matrix', _VERSION='0.2.11.20120416'}
 
@@ -495,6 +498,8 @@ matrix.symbol = symbol
 --
 -- This library is free software; you can redistribute it and/or modify it
 -- under the terms of the MIT license. See LICENSE for details.
+
+-- https://github.com/rxi/shash/blob/master/LICENSE
 
 local shash = { _version = "0.1.1" }
 shash.__index = shash
