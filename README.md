@@ -9,4 +9,4 @@ Nibiruman:2080 is an intense arcade-style shooter.The game was created for the T
 <img src="./capture/s03.gif" alt="Nibiruman:2080 gameplay." width="410" height="230"></img>
 </p>
 <p align="center"><a href="https://tasogare66.itch.io/nibiruman2080">PLAY</a></p>
-<p align="center"><a href="https://tasogare66.itch.io/nibiruman2080">MOVIE</a></p>
+<p align="center"><a href="https://www.youtube.com/watch?v=jMiK29nVkag">MOVIE</a></p>
