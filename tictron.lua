@@ -2677,7 +2677,7 @@ function mode_title:draw1()
 	print_hcenter("HIGH SCORE",2,6,false,1)
 	print_hcenter(string.format("%d",HISCORE),10,15,true,1)
 	print(GAME_VER,4,SCR_HEIGHT-16,7,false)
-	print("@tasogare66",4,SCR_HEIGHT-8,7,false)
+	print("@tasogare66 2020",4,SCR_HEIGHT-8,7,false)
 end
 mode_title.new = function()
 	return setmetatable({
