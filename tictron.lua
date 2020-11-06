@@ -865,7 +865,7 @@ function SqpLst:add_base(p,num,radius,lifetm,args)
 		local ofs=Vec2.new(r*cos(theta),r*sin(theta))
 		local side=random(args.sidea,args.sideb) --size
 		local side_ed=args.side_ed_a and min(random(args.side_ed_a,args.side_ed_b),side) or side
-		local p={
+		local pt={
 			pos=p+ofs,
 			col=cols[random(1,#cols)],
 			wh=side,
@@ -876,7 +876,7 @@ function SqpLst:add_base(p,num,radius,lifetm,args)
 			lifetm=lifetm,
 			lifetm_base=lifetm,
 		}
-		insert(self.lst,#self.lst+1,p)
+		insert(self.lst,#self.lst+1,pt)
 	end
 end
 function SqpLst:update(dt)
@@ -1909,6 +1909,7 @@ function ObjLst:insert_pxs(e)
 	e.sha=self.PX_SHA -- eにも記録
 	self.PX_SHA:add(e, e.aabb0.x, e.aabb0.y, e.aabb_size.x, e.aabb_size.y)
 	insert(self.pxs,#self.pxs+1,e)
+	insert(self.verlet,#self.verlet+1,e)
 end
 function ObjLst:insert_ene_bullet(e)
 	e.sha=self.ENBLT_SHA -- eにも記録
@@ -2096,9 +2097,6 @@ ObjLst.upd_verlet = function(self,dt)
 	local prev_inv_dt=1/self.prev_dt
 	local damping=0.4 --なし:1
 	local decel = math.pow(abs(damping), dt);
-	for _,o in pairs(self.pxs) do
-		o:do_verlet(dt,prev_inv_dt,decel)
-	end
 	for _,o in pairs(self.verlet) do
 		o:do_verlet(dt,prev_inv_dt,decel)
 	end
@@ -2218,12 +2216,12 @@ end
 Spawner.spiral_co = function(self,args)
 	local radius = 160
 	for i=0, 110 do
-			radius = radius - 1.5
-			local m = matrix_roty(15*i)
-			local v = matrix { {-radius},{2},{1}, }
-			local pos = m*v
-			ObjLstA:spawn(pos[1][1],pos[2][1],args.t)
-			wait_for_second(0.06)
+		radius = radius - 1.5
+		local m = matrix_roty(15*i)
+		local v = matrix { {-radius},{2},{1}, }
+		local pos = m*v
+		ObjLstA:spawn(pos[1][1],pos[2][1],args.t)
+		wait_for_second(0.06)
 	end
 end
 Spawner.circle_co = function(self,args)
@@ -2638,9 +2636,6 @@ function mode_title:ctrl(dt)
 		self.decide_time = self.decide_time - dt
 	elseif btn_dec() then
 		self.decide_type=CURSOR==0 and Input.StateLog or Input.StateTrace
-		self:setdec()
-	elseif btnp(7) then --replay
-		self.decide_type=Input.StateTrace
 		self:setdec()
 	elseif btn(0) then CURSOR=0
 	elseif btn(1) and Input:exists_log() then CURSOR=1
