@@ -57,9 +57,9 @@ end
 function randomf(l,r)
 	return l+random()*(r-l)
 end
-function psfx(id,note,dur,chnl)
+function psfx(id,dur,chnl)
 	--0:shot,1:def,2:ene,3:force
-	if _MUTE~=true then sfx(id,note,dur,chnl) end
+	if _MUTE~=true then sfx(id,nil,dur,chnl) end
 end
 
 -- Vec2 is
@@ -1261,7 +1261,7 @@ Player.upd=function(self,dt)
 	if self.dashst==0 then
 		if self.coolt > 0 then
 			self.coolt=self.coolt-dt
-			if self.coolt<=0 then psfx(9,'G-4',40,3) end 
+			if self.coolt<=0 then psfx(9,40,3) end 
 		else
 			if dashon then
 				local v=self.reticle.pos-self.pos
@@ -1282,7 +1282,7 @@ Player.upd=function(self,dt)
 		self.dashvec=self.pos-self.old_pos
 		self.dashvec:SetNormalize()
 		if (self.elp//FRAME2SEC)%10==0 then
-			psfx(8,'G-6',10,0)
+			psfx(8,10,0)
 		end
 
 		if self.dash_limit-self.dasht<0.1 or (dashon and self.dasht>=0) then
@@ -1331,7 +1331,7 @@ Player.upd=function(self,dt)
 					ObjLstA:add(self.pos.x,self.pos.y,PlBullet,{dir=Vec2.new(v.x*c-v.y*s,v.y*c+v.x*s)})
 					ObjLstA:add(self.pos.x,self.pos.y,PlBullet,{dir=Vec2.new(v.x*c+v.y*s,v.y*c-v.x*s)})
 				end
-				psfx(3,'C-3',9,0)
+				psfx(3,9,0)
 			end
 		end
 		self.shot_repeat=self.shot_repeat+1
@@ -1405,7 +1405,7 @@ function ForceF:init(args)
 	self.health=max(lerp(1,50,t),10)
 	self.inner_r=23
 	SqpLst:add(self.pos,20,self.inner_r-4)
-	psfx(5,'F-3',30,3)
+	psfx(5,30,3)
 end
 function ForceF:upd(dt)
 	self.elp=self.elp+dt
@@ -1479,14 +1479,14 @@ function Enemy:dead()
 	GAME:add_score(self.score)
 	if self:check_flag(Flag_HaveDot) then
 		ObjLstA:add(self.pos.x,self.pos.y,EneDot)
-		psfx(2,'D-4',20,1)
+		psfx(2,20,1)
 	end
 	PtclLst:add(self.pos,15)
 end
 function Enemy:set_blink()
 	if self.blink <= 0 then
 		self.blink=self.blinktm
-		psfx(10,'C-7',30,2)
+		psfx(10,30,2)
 	end
 end
 function Enemy:upd_blink(dt)
@@ -1667,7 +1667,7 @@ function Boss:dead()
 	random_circle(6,3,self.radius*2,function(x,y) PtclLst:add(Vec2.new(self.pos.x+x,self.pos.y+y),15) end)
 	Camera:req_shake(2)
 	Enemy.dead(self)
-	psfx(5,'F-3',30,3)
+	psfx(5,30,3)
 	GAME.boss=nil
 end
 function Boss:upd_for_second(sec,func)
@@ -1709,7 +1709,7 @@ function Boss:upd(dt)
 	end
 	if self.appear_flag then
 		SqpLst:add_bossap(self.pos,2,self.radius+6)
-		if self.elapsed//FRAME2SEC%20==0 then psfx(11,'A-4',20,3) end
+		if self.elapsed//FRAME2SEC%20==0 then psfx(11,20,3) end
 	end
 end
 function Boss:upd_ene(dt)
@@ -1808,7 +1808,7 @@ function Human:dead()
 	GAME:reduceDiff(30)
 	GAME.pl:add_armslv()
 	ObjLstA:add(self.pos.x,self.pos.y,Pop2D)
-	psfx(6,'E-4',20,3)
+	psfx(6,20,3)
 end
 
 -- enedot
@@ -1841,7 +1841,7 @@ function EneDot:hitcb(dist)
 		GAME:add_score(self.score)
 		GAME:add_multiplier()
 		GAME:reduceDiff(0.5)
-		psfx(4,'F-6',5,2)
+		psfx(4,5,2)
 		self:del()
 	else
 		self.captured=true
@@ -2624,7 +2624,7 @@ end
 function mode_title:setdec()
 	self.decide=true
 	self.decide_time=1
-	psfx(7,'D-4',30,0)
+	psfx(7,30,0)
 end
 function mode_title:ctrl(dt)
 	self.elp=self.elp+dt
