@@ -2532,6 +2532,7 @@ end
 mode_game.draw1 = function(self)
 	if self.boss then self.boss:drw_info() end
 	local c=self.multiplier<=1.0 and 2 or math.floor(self.multime/self.multimeLimit*3)+1
+	c=clamp(c,1,3)
 	local col={6,15,11}
 	print(string.format("%5.2fx",self.multiplier),180+6*2,8,col[c],true)
 	print(string.format("% 10d",self.score),180-6,0,15,true)
