@@ -1821,6 +1821,7 @@ EneDot.init=function(self)
 	self.timer=6
 	self.captured=false
 	self.captime=0
+	self.spr=self.ene_spr
 	ObjLstA:insert_ene_dot(self)
 end
 EneDot.upd=function(self,dt)
