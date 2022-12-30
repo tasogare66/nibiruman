@@ -25,7 +25,7 @@ function table.clone(org)
 end
 
 GAME_VER="v.0.9.1"
-FORWEB=true --web version
+FORWEB=false --web version
 if FORWEB then GAME_VER=GAME_VER.."W" end
 SCR_WIDTH=240
 SCR_HEIGHT=136
@@ -1245,7 +1245,7 @@ Player.check_invincible=function(self,dt)
 end
 function Player:add_armslv()
 	self.armslv=min(self.armslv+1,3)
-	self.armstime=18
+	self.armstime=27
 end
 function Player:upd_armslv(dt)
 	if self.armstime>0 then
@@ -1522,7 +1522,7 @@ EneSnake.upd_ene=function(self,dt)
 	local tgt = GAME.pl.pos
 	local dir = tgt - self.pos
 	dir:SetNormalize()
-	local len=9*dt*GAME:getDifV(1,3)
+	local len=9*dt*GAME:getDifV(1,5)
 	self.mov = self.mov + dir*len
 	local s=(self.elapsed//(FRAME2SEC*4))%4
 	local animdir=dir.x>0 and 0 or 1
@@ -1539,7 +1539,7 @@ function EneGrunt:init()
 end
 EneGrunt.upd_ene=function(self,dt)
 	self.rad = self.rad + DEG2RAD*120*dt
-	local len=0.24*GAME:getDifV(1,2.5)
+	local len=0.24*GAME:getDifV(1,3.5)
 	self.mov.x = self.mov.x + cos(self.rad) * len
 	self.mov.y = self.mov.y + sin(self.rad) * len
 	local s=(self.elapsed//(FRAME2SEC*12))%4
@@ -1560,7 +1560,7 @@ function EneHulk:init()
 	self.animdir=random(0,1)
 end
 function EneHulk:setmvtm()
-	self.mvtm=randomf(2.5,GAME:getDifV(6,2.7))
+	self.mvtm=randomf(GAME:getDifV(2.5,0.5),GAME:getDifV(6,2.0))
 end
 function EneHulk:upd_ene(dt)
 	self:upd_blink(dt)
@@ -1591,7 +1591,7 @@ EneArrow.init=function(self,args)
 		self.dir:Div(l)
 	end 
 	self.ang=atan2(self.dir.y,self.dir.x)
-	self.speed=GAME:getDifV(45,60)
+	self.speed=GAME:getDifV(45,70)
 end
 EneArrow.upd_ene=function(self,dt)
 	self.mov = self.dir*self.speed*dt
@@ -1629,7 +1629,7 @@ function EneSphe:init(args)
 	self.drw=self.drw_blink
 	self.rotr=self.pos:Magnitude()
 	self.rdir=args.rdir or 1
-	self.speed=GAME:getDifV(50,60)
+	self.speed=GAME:getDifV(50,80)
 end
 function EneSphe:upd_ene(dt)
 	self:upd_blink(dt)
@@ -1650,6 +1650,7 @@ function BossBullet:init(args)
 	Enemy.init(self)
 	self.dir=args.dir
 	self.dir:Normalize()
+	self.speed=GAME:getDifV(50,80)
 	Enemy.appear(self)
 end
 function BossBullet:upd(dt)
@@ -1672,6 +1673,7 @@ function Boss:init()
 	self:set_mass(5)
 	self.health_max=500
 	self.health=self.health_max
+	self.exp_resi=3
 	self.co=nil
 	self.arms_timer=0
 	self.dspofs=Vec2.new()
@@ -2623,7 +2625,7 @@ function mode_game:upd_info(dt)
 	end
 	self.multime=max(self.multime-dt,0)
 	if self.ticcnt%30==0 then
-		self.difficulty=min(max(ObjLstA:get_spawn_ttl()-self.diffsub,0)/2000,1)
+		self.difficulty=min(max(ObjLstA:get_spawn_ttl()-self.diffsub,0)/3000,1)
 	end
 	self.ticcnt=self.ticcnt+1
 end
@@ -2658,8 +2660,8 @@ function mode_title:ctrl(dt)
 	elseif btn_dec() then
 		self.decide_type=CURSOR==0 and Input.StateLog or Input.StateTrace
 		self:setdec()
-	elseif btn(0) then CURSOR=0
-	elseif btn(1) and Input:exists_log() then CURSOR=1
+	elseif btn(0) or key(KEY.W) then CURSOR=0
+	elseif (btn(1) or key(KEY.S)) and Input:exists_log() then CURSOR=1
 	end
 	return true
 end
