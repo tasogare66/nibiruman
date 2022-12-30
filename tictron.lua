@@ -24,7 +24,9 @@ function table.clone(org)
 	return copy
 end
 
-GAME_VER="v.0.9.0"
+GAME_VER="v.0.9.1"
+FORWEB=true --web version
+if FORWEB then GAME_VER=GAME_VER.."W" end
 SCR_WIDTH=240
 SCR_HEIGHT=136
 
@@ -696,6 +698,16 @@ function IData:upd(dt)
 	local mx,my,ml,_,mr=mouse()
 	if btn(4) or ml then m=m|Button_Shot end
 	if btn(5) or mr then m=m|Button_Dash end
+	if _RNDINP then
+		if random()<0.5 then m=m|Button_Up end
+		if random()<0.5 then m=m|Button_Down end
+		if random()<0.5 then m=m|Button_Left end
+		if random()<0.5 then m=m|Button_Right end
+		mx=random(0,SCR_WIDTH)
+		my=random(0,SCR_HEIGHT)
+		m=m|Button_Shot
+		if random()<0.5 then m=m|Button_Dash end
+	end
 	local mpos=Vec2.new(mx,my)
 	self.mask=m
 	self.mpos=mpos
@@ -708,6 +720,7 @@ end
 
 Input={
 	StateLog=1,StateTrace=2,
+	RecMaxTm=FORWEB and 60*60*20 or 60*60*60,--1hour
 	cur=IData.new(),
 	logs={},
 	state=0,--1:log,2:trace
@@ -760,7 +773,9 @@ function Input:upd(dt)
 		elseif IData.eq(self.cur,d) then
 			self.cur.num=self.cur.num+1
 		else
-			insert(self.logs,self.cur)
+			if not self:rec_over() then
+				insert(self.logs,self.cur)
+			end
 			self.cur=d
 		end
 	elseif self.state==self.StateTrace then
@@ -791,6 +806,9 @@ function Input:log_num()
 end
 function Input:exists_log()
 	return #self.logs>0
+end
+function Input:rec_over()
+	return #self.logs>self.RecMaxTm
 end
 
 function lerp(a,b,t) return a*(1-t) + b*t end
@@ -2557,6 +2575,7 @@ mode_game.draw1 = function(self)
 			print(gov,x,y,15)
 		end
 	end
+	if Input:rec_over() then print("replay buf over",SCR_WIDTH-60,SCR_HEIGHT-6,6,false,1,true) end
 	if _DEBUG then
 		print_dbg(string.format("s:%d,spw:%d,dif:%f(%6.1f)",self.spawner:num(),ObjLstA:get_spawn_ttl(),self.difficulty,self.diffsub),0,8+6*3)
 		--print_dbg(Camera.center,0,8+6*3)
@@ -2674,7 +2693,7 @@ function mode_title:draw1()
 	print_hcenter("HIGH SCORE",2,6,false,1)
 	print_hcenter(string.format("%d",HISCORE),10,15,true,1)
 	print(GAME_VER,4,SCR_HEIGHT-16,7,false)
-	print("@tasogare66 2020",4,SCR_HEIGHT-8,7,false)
+	print("@tasogare66 2020-2022",4,SCR_HEIGHT-8,7,false)
 end
 mode_title.new = function()
 	return setmetatable({
@@ -2691,7 +2710,7 @@ HISCORE=50000
 CURSOR=0
 MODEM:request(mode_title.new())
 
-_DEBUG,_MUTE,dbg_pause=false,false,false
+_DEBUG,_MUTE,_RNDINP,dbg_pause=false,false,false,false
 prev_time=time()/1000
 frame_time_sum=0
 frame_times={}
