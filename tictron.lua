@@ -1344,7 +1344,13 @@ Player.upd=function(self,dt)
 			if d > EPSILON then
 				ObjLstA:add(self.pos.x,self.pos.y,PlBullet,{dir=v:Div(d)})
 				if self.armslv>1 then
-					local ang=math.rad(20)
+					local ang=math.rad(self.armslv>2 and 15 or 20)
+					local c,s=cos(ang),sin(ang)
+					ObjLstA:add(self.pos.x,self.pos.y,PlBullet,{dir=Vec2.new(v.x*c-v.y*s,v.y*c+v.x*s)})
+					ObjLstA:add(self.pos.x,self.pos.y,PlBullet,{dir=Vec2.new(v.x*c+v.y*s,v.y*c-v.x*s)})
+				end
+				if self.armslv>2 then
+					local ang=math.rad(30)
 					local c,s=cos(ang),sin(ang)
 					ObjLstA:add(self.pos.x,self.pos.y,PlBullet,{dir=Vec2.new(v.x*c-v.y*s,v.y*c+v.x*s)})
 					ObjLstA:add(self.pos.x,self.pos.y,PlBullet,{dir=Vec2.new(v.x*c+v.y*s,v.y*c-v.x*s)})
